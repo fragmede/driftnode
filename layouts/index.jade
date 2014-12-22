@@ -1,0 +1,58 @@
+doctype html
+html(lang="en")
+	head
+		title Driftnode
+
+		link(rel="stylesheet", type="css/text", href="css/bootstrap.css")
+		script(type="text/javascript", src="js/jquery.js")
+		script(type="text/javascript", src="http://#{host}:#{port}/socket.io/socket.io.js")
+		script(type="text/javascript", src="js/underscore.js")
+		script(type="text/javascript", src="js/backbone.js")
+		script.
+			var Model = Backbone.Model.extend({
+				url: '',
+				render: function(){
+					var template = _.template( $('#imageTemplate').html() );
+					console.log(this.attributes);
+					
+					var size = 0, key, url ='';
+
+					for (key in this.attributes){
+						if (this.attributes.hasOwnProperty(key)) size++;
+					}
+
+					for (var c = 0; c < size ; c++){
+						url += this.attributes[c];
+					}
+
+					if ( url.indexOf('jpg') > 0 || url.indexOf('jpeg') > 0|| url.indexOf('jpg') > 0  || url.indexOf('gif') > 0 ){
+						var html = template({url: url });
+						$('#imageContainer').append(html);
+						console.log('appending url: ' + url);
+					}
+					
+				}
+			});
+			var mCollection = Backbone.Collection.extend({
+				model: Model
+			});
+			var imageCollection = new mCollection();
+			socket = io();
+
+			socket.on('image found', function(msg){
+				var tM = new Model(msg.url);
+				imageCollection.add(tM);
+				tM.render();
+
+			});
+
+
+	body
+		h1 Driftnode - v0.0.1
+		div.container(id="imageContainer")
+			
+
+
+	script(type="text/template", id="imageTemplate").
+		<div class="row">
+			<img class="img-responsive" src="<%- url %>">
