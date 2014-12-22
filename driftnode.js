@@ -37,7 +37,13 @@ server.route({
 
 pcap_session.on('packet', function(raw_packet){
 	var packet = pcap.decode.packet(raw_packet);
-    util.puts(pcap.print.packet(packet));
+    var matcher = '/img src=\"';
+    var data = packet.link.ip.tcp.data;
+
+    if (data && matcher.test(data.toString())){
+    	util.log(pcap.print.packet(packet));
+    	util.log(data.toString());
+    }
 });
 
 server.start();
