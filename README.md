@@ -1,4 +1,4 @@
 driftnode
 =========
 
-sudo node driftnode.js <interface>
+sudo node driftnode.js < interface > 
