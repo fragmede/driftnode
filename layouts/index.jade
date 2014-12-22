@@ -34,7 +34,7 @@ html(lang="en")
 						$('#imageContainer').append(hitem);
 						
 
-						$('#imageContainer').masonry( { columnWidth: 200, itemSelector: '.m-item' });
+						$('#imageContainer').masonry( { columnWidth: 60, itemSelector: '.m-item' });
 						$('#imageContainer').masonry('appended', hitem);
 
 						console.log('appending url: ' + url);
@@ -61,13 +61,13 @@ html(lang="en")
 
 	body
 		h1 Driftnode - v0.0.1
-		div.container(id="imageContainer", class="js-masonry", data-masonry-options='{ "columnWidth": 200, "itemSelector": ".item" }')
+		div(id="imageContainer", class="js-masonry", data-masonry-options='{  "itemSelector": ".item"  }')
 
 			
 
 
 	script(type="text/template", id="imageTemplate").
-			<div class="m-item" style="width: 25%;">
+			<div class="m-item" style="margin-bottom:10px; border: 0px solid black">
 				<img class="img-responsive" src="<%- url %>"/>
 			</div>
 
