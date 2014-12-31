@@ -5,7 +5,7 @@ var server = new Hapi.Server();
 var jade = require('jade');
 var pcap = require("pcap"), 
     pcap_session ,
-    matcher = /get.*\.[jpg|jpeg|gif|png]/i;
+    matcher = /GET.*\.[jpg|jpeg|gif|png]/;
 var util = require('util');
 var Backbone = require('backbone');
 var lodash = require('lodash');
@@ -26,8 +26,9 @@ var mCollection = Backbone.Collection.extend({
 
 var imageCollection = new mCollection();
 
-function started(){
-	util.log('Server started: http://localhost:8910/');
+function started(error){
+	if(!error)
+		util.log('Server started: http://localhost:8910/');
 }
 
 if (process.argv.length != 3 ){
@@ -38,6 +39,8 @@ if (process.argv.length != 3 ){
 var ioHandler = function (socket){
 	console.log('a user connected');
 };
+
+
 
 pcap_session = pcap.createSession(process.argv[2], 'port 80');
 
@@ -87,16 +90,25 @@ pcap_session.on('packet', function(raw_packet){
     var data = packet.link.ip.tcp.data;
 
     if (data && matcher.test(data.toString())) {
-    	var url = data.toString().split('\n')[0].split(' ')[1];
-    	var host = data.toString().split('\n')[1].split(': ')[1];
-    	
-    	console.log(data.toString());
+    	var pdata = data.toString().split('\n');
+    	var host, content;
+    	if (pdata[0].indexOf('jpg') > 0 || pdata[0].indexOf('jpeg') > 0|| pdata[0].indexOf('jpg') > 0  || pdata[0].indexOf('gif') > 0){
+    		if (pdata[1]){
+    			content = pdata[0].split(' ')[1];
+    			host = pdata[1].split(' ')[1].trim();
+    			console.log(host);
+    			url = host + content;
+    			
+    			var tM = new Model({ url: 'http://' + url});
+	    		imageCollection.add(tM);
+	    		console.log('image added collection length: ' + imageCollection.length);
+	    		io.emit('image found', tM);
 
-    	var tM = new Model({ url: 'http://' + host + url });
-    	imageCollection.add(tM);
-    	console.log('image added collection length: ' + imageCollection.length);
-    	io.emit('image found', tM);
+    		}
+
+    	}
     }
 });
 
-server.start();
+server.start(started);
+

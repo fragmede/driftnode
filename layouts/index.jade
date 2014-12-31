@@ -4,6 +4,7 @@ html(lang="en")
 		title Driftnode
 
 		link(rel="stylesheet", type="css/text", href="css/bootstrap.css")
+		link(rel="stylesheet", type="css/text", href="css/style.css")
 		script(type="text/javascript", src="js/jquery.js")
 		script(type="text/javascript", src="http://#{host}:#{port}/socket.io/socket.io.js")
 		script(type="text/javascript", src="js/underscore.js")
@@ -31,11 +32,11 @@ html(lang="en")
 					if ( url.indexOf('jpg') > 0 || url.indexOf('jpeg') > 0|| url.indexOf('jpg') > 0  || url.indexOf('gif') > 0 ){
 						var html = template({url: url });
 						var hitem = $(html);
-						$('#imageContainer').append(hitem);
+						$('#imageContainer').prepend(hitem);
 						
 
 						$('#imageContainer').masonry( { columnWidth: 60, itemSelector: '.m-item' });
-						$('#imageContainer').masonry('appended', hitem);
+						$('#imageContainer').masonry('prepended', hitem);
 
 						console.log('appending url: ' + url);
 
@@ -59,7 +60,7 @@ html(lang="en")
 			});
 			});
 
-	body
+	body.container
 		h1 Driftnode - v0.0.1
 		div(id="imageContainer", class="js-masonry", data-masonry-options='{  "itemSelector": ".item"  }')
 
@@ -67,7 +68,7 @@ html(lang="en")
 
 
 	script(type="text/template", id="imageTemplate").
-			<div class="m-item" style="margin-bottom:10px; border: 0px solid black">
+			<div class="m-item">
 				<img class="img-responsive" src="<%- url %>"/>
 			</div>
 
